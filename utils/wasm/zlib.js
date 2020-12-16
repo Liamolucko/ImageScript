@@ -1,6 +1,8 @@
 let wasm, u8array_ref, i32array_ref;
 
 async function load() {
+    if (wasm) return;
+
     {
         const { instance } = await WebAssembly.instantiateStreaming(fetch('https://deno.land/x/imagescript@1.1.14/utils/wasm/zlib.wasm'));
     
