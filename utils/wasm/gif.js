@@ -17,19 +17,6 @@ function getStringFromWasm0(ptr, len) {
 	return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len));
 }
 
-{
-	const module = new WebAssembly.Module(await fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/gif.wasm').then(r => r.arrayBuffer()));
-	const instance = new WebAssembly.Instance(module, {
-		__wbindgen_placeholder__: {
-			__wbindgen_throw: function (arg0, arg1) {
-				throw new Error(getStringFromWasm0(arg0, arg1));
-			},
-		}
-	});
-
-	wasm = instance.exports;
-}
-
 let cachegetInt32Memory0 = null;
 
 function getInt32Memory0() {
@@ -63,6 +50,18 @@ export class GIFEncoder {
 	 * @param {number} repeat
 	 */
 	static async initialize(width, height, repeat) {
+		if (!wasm) {
+			const { instance } = await WebAssembly.instantiateStreaming(fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/gif.wasm'), {
+				__wbindgen_placeholder__: {
+					__wbindgen_throw: function (arg0, arg1) {
+						throw new Error(getStringFromWasm0(arg0, arg1));
+					},
+				}
+			});
+
+			wasm = instance.exports;
+		}
+
 		const ret = wasm.gif_encoder_new(width, height, repeat);
 		return new GIFEncoder(ret);
 	}

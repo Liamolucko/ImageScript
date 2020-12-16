@@ -1,12 +1,5 @@
 let wasm;
 
-{
-    const module = new WebAssembly.Module(await fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/jpeg.wasm').then(r => r.arrayBuffer()));
-    const instance = new WebAssembly.Instance(module);
-
-    wasm = instance.exports;
-}
-
 let cachegetUint8Memory0 = null;
 function getUint8Memory0() {
     if (cachegetUint8Memory0 === null || cachegetUint8Memory0.buffer !== wasm.memory.buffer) {
@@ -50,6 +43,14 @@ function getArrayU16FromWasm0(ptr, len) {
     return getUint16Memory0().subarray(ptr / 2, ptr / 2 + len);
 }
 
+
+async function initWASM() {
+    if (wasm) return;
+
+    const { instance } = await WebAssembly.instantiateStreaming(fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/jpeg.wasm'));
+    wasm = instance.exports;
+}
+
 /**
  * @param {number} width
  * @param {number} height
@@ -58,6 +59,8 @@ function getArrayU16FromWasm0(ptr, len) {
  * @returns {Uint8Array}
  */
 export function encode(width, height, quality, buffer) {
+    await initWASM();
+
     try {
         const retptr = wasm.__wbindgen_export_0.value - 16;
         wasm.__wbindgen_export_0.value = retptr;
@@ -78,9 +81,11 @@ export function encode(width, height, quality, buffer) {
  * @param {Uint8Array} buffer
  * @param {number} width
  * @param {number} height
- * @returns {number}
+ * @returns {Promise<number>}
  */
 export function decode(ptr, buffer, width, height) {
+    await initWASM();
+
     const ptr0 = passArray8ToWasm0(buffer, wasm.__wbindgen_malloc);
     return wasm.decode(ptr, ptr0, WASM_VECTOR_LEN, width, height);
 }

@@ -1,14 +1,15 @@
-let wasm;
+let wasm, u8array_ref, i32array_ref;
 
-{
-    const module = new WebAssembly.Module(await fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/zlib.wasm').then(r => r.arrayBuffer()));
-    const instance = new WebAssembly.Instance(module);
-
-    wasm = instance.exports;
+async function load() {
+    {
+        const { instance } = await WebAssembly.instantiateStreaming(fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/zlib.wasm'));
+    
+        wasm = instance.exports;
+    }
+    
+    u8array_ref = new Uint8Array(wasm.memory.buffer);
+    i32array_ref = new Int32Array(wasm.memory.buffer);
 }
-
-let u8array_ref = new Uint8Array(wasm.memory.buffer);
-let i32array_ref = new Int32Array(wasm.memory.buffer);
 
 function u8array() {
     return u8array_ref.buffer === wasm.memory.buffer ? u8array_ref : (u8array_ref = new Uint8Array(wasm.memory.buffer));
@@ -28,7 +29,9 @@ function u8array_to_ptr(buffer) {
     return ptr;
 }
 
-export function compress(buffer, level) {
+export async function compress(buffer, level) {
+    await load();
+
     const ptr = u8array_to_ptr(buffer);
     wasm.compress(8, ptr, buffer.length, level);
 
@@ -38,7 +41,9 @@ export function compress(buffer, level) {
     return slice;
 }
 
-export function compress_raw(buffer, level) {
+export async function compress_raw(buffer, level) {
+    await load();
+
     const ptr = u8array_to_ptr(buffer);
     wasm.compress_raw(8, ptr, buffer.length, level);
 
@@ -48,7 +53,9 @@ export function compress_raw(buffer, level) {
     return slice;
 }
 
-export function decompress(buffer, limit) {
+export async function decompress(buffer, limit) {
+    await load();
+
     const ptr = u8array_to_ptr(buffer);
 
     try {
@@ -64,7 +71,9 @@ export function decompress(buffer, limit) {
     }
 }
 
-export function decompress_raw(buffer, limit) {
+export async function decompress_raw(buffer, limit) {
+    await load();
+
     const ptr = u8array_to_ptr(buffer);
 
     try {
@@ -80,7 +89,9 @@ export function decompress_raw(buffer, limit) {
     }
 }
 
-export function decompress_with(buffer, limit, transform) {
+export async function decompress_with(buffer, limit, transform) {
+    await load();
+
     const ptr = u8array_to_ptr(buffer);
 
     try {
@@ -103,7 +114,9 @@ export function decompress_with(buffer, limit, transform) {
     }
 }
 
-export function decompress_raw_with(buffer, limit, transform) {
+export async function decompress_raw_with(buffer, limit, transform) {
+    await load();
+
     const ptr = u8array_to_ptr(buffer);
 
     try {

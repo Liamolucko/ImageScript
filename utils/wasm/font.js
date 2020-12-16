@@ -1,15 +1,4 @@
-let wasm;
-
-{
-    const module = new WebAssembly.Module(await fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/font.wasm').then(r => r.arrayBuffer()));
-    const instance = new WebAssembly.Instance(module);
-
-    wasm = instance.exports;
-}
-
-let u8array_ref = new Uint8Array(wasm.memory.buffer);
-let i32array_ref = new Int32Array(wasm.memory.buffer);
-let u32array_ref = new Uint32Array(wasm.memory.buffer);
+let u8array_ref, i32array_ref, u32array_ref, wasm;
 
 const utf8encoder = new TextEncoder();
 
@@ -89,7 +78,16 @@ export function meta(id) {
     return slice;
 }
 
-export function load(id, buffer, scale = 128) {
+export async function load(id, buffer, scale = 128) {
+    if (!wasm) {
+        const { instance } = await WebAssembly.instantiateStreaming(fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/font.wasm'));
+
+        wasm = instance.exports;
+        u8array_ref = new Uint8Array(wasm.memory.buffer);
+        i32array_ref = new Int32Array(wasm.memory.buffer);
+        u32array_ref = new Uint32Array(wasm.memory.buffer);
+    }
+
     wasm.load(id, u8array_to_ptr(buffer), buffer.length, scale);
 }
 
