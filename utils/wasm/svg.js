@@ -102,7 +102,7 @@ function getArrayU8FromWasm0(ptr, len) {
  */
 export async function rgba(ptr, svg, fit_kind, zoom, width, height) {
     if (!wasm) {
-        const { instance } = await WebAssembly.instantiateStreaming(fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/svg.wasm'));
+        const { instance } = await WebAssembly.instantiateStreaming(fetch('https://deno.land/x/imagescript@1.1.14/utils/wasm/svg.wasm'));
         wasm = instance.exports;
     }
 

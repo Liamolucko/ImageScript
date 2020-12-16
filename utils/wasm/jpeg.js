@@ -47,7 +47,7 @@ function getArrayU16FromWasm0(ptr, len) {
 async function initWASM() {
     if (wasm) return;
 
-    const { instance } = await WebAssembly.instantiateStreaming(fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/jpeg.wasm'));
+    const { instance } = await WebAssembly.instantiateStreaming(fetch('https://deno.land/x/imagescript@1.1.14/utils/wasm/jpeg.wasm'));
     wasm = instance.exports;
 }
 

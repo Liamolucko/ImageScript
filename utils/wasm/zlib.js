@@ -2,7 +2,7 @@ let wasm, u8array_ref, i32array_ref;
 
 async function load() {
     {
-        const { instance } = await WebAssembly.instantiateStreaming(fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/zlib.wasm'));
+        const { instance } = await WebAssembly.instantiateStreaming(fetch('https://deno.land/x/imagescript@1.1.14/utils/wasm/zlib.wasm'));
     
         wasm = instance.exports;
     }

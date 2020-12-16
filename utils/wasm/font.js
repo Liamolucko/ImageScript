@@ -80,7 +80,7 @@ export function meta(id) {
 
 export async function load(id, buffer, scale = 128) {
     if (!wasm) {
-        const { instance } = await WebAssembly.instantiateStreaming(fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/font.wasm'));
+        const { instance } = await WebAssembly.instantiateStreaming(fetch('https://deno.land/x/imagescript@1.1.14/utils/wasm/font.wasm'));
 
         wasm = instance.exports;
         u8array_ref = new Uint8Array(wasm.memory.buffer);

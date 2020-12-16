@@ -51,7 +51,7 @@ export class GIFEncoder {
 	 */
 	static async initialize(width, height, repeat) {
 		if (!wasm) {
-			const { instance } = await WebAssembly.instantiateStreaming(fetch('https://github.com/matmen/ImageScript/raw/deno/utils/wasm/gif.wasm'), {
+			const { instance } = await WebAssembly.instantiateStreaming(fetch('https://deno.land/x/imagescript@1.1.14/utils/wasm/gif.wasm'), {
 				__wbindgen_placeholder__: {
 					__wbindgen_throw: function (arg0, arg1) {
 						throw new Error(getStringFromWasm0(arg0, arg1));
