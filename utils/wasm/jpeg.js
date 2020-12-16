@@ -58,7 +58,7 @@ async function initWASM() {
  * @param {Uint8Array|Uint8ClampedArray} buffer
  * @returns {Uint8Array}
  */
-export function encode(width, height, quality, buffer) {
+export async function encode(width, height, quality, buffer) {
     await initWASM();
 
     try {
@@ -83,7 +83,7 @@ export function encode(width, height, quality, buffer) {
  * @param {number} height
  * @returns {Promise<number>}
  */
-export function decode(ptr, buffer, width, height) {
+export async function decode(ptr, buffer, width, height) {
     await initWASM();
 
     const ptr0 = passArray8ToWasm0(buffer, wasm.__wbindgen_malloc);
